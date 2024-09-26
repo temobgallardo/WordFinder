@@ -35,4 +35,9 @@ public class WordFinder(IEnumerable<string> matrix) : IWordFinder
 
     return wordCount;
   }
+
+  private int FindIndividualInternal(string w)
+  {
+    return 0;
+  }
 }
