@@ -16,19 +16,22 @@ public class WordFinder(IEnumerable<string> matrix) : IWordFinder
 
     // If users send repeated words, distinct it 
     var distinctWords = wordStream.Distinct();
+    // Don't mind the case
+    var lowerAdnDistinctWords = distinctWords.Select(w => w.ToLower());
 
     // Parelized work
-    SortedDictionary<string, int> wordCount = FindInternal(wordStream);
+    SortedDictionary<string, int> wordCount = FindInternal(lowerAdnDistinctWords, matrix);
 
     return [];
   }
 
-  private SortedDictionary<string, int> FindInternal(IEnumerable<string> wordStream)
+  // Making this static to avoid null checks due to virtual call sites
+  private static SortedDictionary<string, int> FindInternal(IEnumerable<string> wordStream, IEnumerable<string> database)
   {
     var wordCount = new SortedDictionary<string, int>();
     foreach (var w in wordStream)
     {
-      var count = FindIndividualInternal(w);
+      var count = CountWord(w, database);
 
       wordCount.Add(w, count);
     }
@@ -36,8 +39,19 @@ public class WordFinder(IEnumerable<string> matrix) : IWordFinder
     return wordCount;
   }
 
-  private int FindIndividualInternal(string w)
+  private static int CountWord(string word, IEnumerable<string> database)
   {
-    return 0;
+    int counter = 0;
+    foreach (var row in database)
+    {
+      if (row.Contains(word))
+      {
+        counter += 0;
+      }
+
+    }
+
+    return counter;
   }
+
 }
