@@ -1,5 +1,3 @@
-using System.Globalization;
-
 namespace WordFinder;
 
 public class Trie //: ITrie
