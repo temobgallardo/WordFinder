@@ -1,8 +1,11 @@
+using System.Text;
+
 namespace WordFinder;
 
 public class Trie //: ITrie
 {
   private readonly TrieNode _rootNode = new();
+  private readonly Dictionary<string, int> _wordsCount = [];
 
   public void Add(string word)
   {
@@ -19,6 +22,7 @@ public class Trie //: ITrie
       node = value;
     }
 
+    _wordsCount.Add(word, 0);
     node.IsWord = true;
   }
 
@@ -39,47 +43,77 @@ public class Trie //: ITrie
     return node.IsWord;
   }
 
-  public bool CountOnStream(string stream, int startSearchIndex, int endSearchIndex, out int stopIndex)
+  public int CountOnStream(string stream)
   {
-    if (startSearchIndex < 0 || startSearchIndex > stream.Length || endSearchIndex < 0 || endSearchIndex > stream.Length)
+    if (string.IsNullOrEmpty(stream))
     {
-      throw new IndexOutOfRangeException($"Either {nameof(startSearchIndex)} or {nameof(endSearchIndex)} are out of bounds.");
+      return 0;
     }
 
-    var node = _rootNode;
-    stopIndex = 0;
-    for (int i = startSearchIndex; i < endSearchIndex; i++)
-    {
-      stopIndex = i;
-
-      if (!node.Children.TryGetValue(stream[i], out TrieNode? value))
-      {
-        return false;
-      }
-
-      if (node.IsWord)
-      {
-        return true;
-      }
-
-      node = value;
-    }
-
-    return node.IsWord;
+    return CountOnStreamInternal(stream);
   }
 
-  public int CountOccurrences(string stream)
+  /// <summary>
+  /// This is O(S) where S is the size of stream. CountOnStream is also O(S) the thing here is that we are moving through the array in both algorithms using the same index and hence don't repeat any work twice.
+  /// </summary>
+  /// <param name="stream"></param>
+  /// <returns></returns>
+  public Dictionary<string, int> CountOccurrences(string stream)
   {
-    int counter = 0;
-    for (int i = 0; i < stream.Length;)
+    if (string.IsNullOrEmpty(stream))
     {
-      var current = stream.Substring(i, stream.Length);
-      if (CountOnStream(current, 0, current.Length, out i))
+      return _wordsCount;
+    }
+
+    return CountOcurrencesInternal(stream);
+  }
+
+  private Dictionary<string, int> CountOcurrencesInternal(string stream)
+  {
+    for (int i = 0; i < stream.Length; i++)
+    {
+      // todo: this could be avoided if passed stream to CountOnStream with indexes
+      var current = stream[i..];
+
+      var position = CountOnStream(current);
+
+      // avoid processing position already done
+      if (position > 0)
       {
-        counter++;
+        i += position;
       }
     }
 
-    return counter;
+    return _wordsCount.OrderByDescending(item => item.Value).ToDictionary();
+  }
+
+  private int CountOnStreamInternal(string stream)
+  {
+    int i = -1;
+    var node = _rootNode;
+    StringBuilder wordBuilder = new();
+
+    foreach (var w in stream)
+    {
+      if (!node.TryGetNode(w, out TrieNode? crntNode))
+      {
+        return i;
+      }
+
+      wordBuilder.Append(w);
+      if (crntNode.IsWord)
+      {
+        // found a word, count it
+        var word = wordBuilder.ToString();
+        _wordsCount[word]++;
+      }
+
+      i++;
+
+      // keep going through the tree
+      node = crntNode;
+    }
+
+    return i;
   }
 }
