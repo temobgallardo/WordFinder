@@ -6,7 +6,6 @@ public class Trie_Tests
     public void CountOcurrences_Test1()
     {
         Trie sut = new();
-        // var input = "afjodkjadgoodadjiidgoodgioagood";
         var input = "adgoodadjiidgoodgioagood";
         string[] words = ["good", "go", "and"];
         int actualCountGo = 3;
@@ -29,7 +28,6 @@ public class Trie_Tests
     public void CountOcurrences_Test2(TrieTestData testData)
     {
         Trie sut = new();
-        // var input = "afjodkjadgoodadjiidgoodgioagood";
         var input = testData.StreamInput;
         string[] words = testData.InputData;
 
