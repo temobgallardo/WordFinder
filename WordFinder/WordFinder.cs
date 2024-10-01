@@ -21,7 +21,9 @@ public class WordFinder(IEnumerable<string> matrix) : IWordFinder
     }
 
     // If users send repeated words, distinct them
-    var distinctWords = wordStream.Distinct();
+    // var distinctWords = wordStream.Distinct();
+    var distinctWords = new HashSet<string>(wordStream);
+
     // Don't mind the case
     var lowerAdnDistinctWords = distinctWords.Select(w => w.ToLower());
 
@@ -72,81 +74,21 @@ public class WordFinder(IEnumerable<string> matrix) : IWordFinder
   }
 
   /// <summary>
-  /// The database is defined as a 64x64 sized matrix, hence we can use that to make this operation very efficient
+  /// Rotate the matrix database -90 degrees. This is a O(N^2) and could be highly improved if I process the data as it comes
   /// </summary>
   /// <param name="database"></param>
-  /// <returns></returns>
+  /// <returns>Rotated database by -90 degrees</returns>
   public static IEnumerable<string> RotateDatabaseMatrix90Degrees(IEnumerable<string> database)
   {
     var localToUseStackMemory = database;
-    List<string> rotated = new(64);
+    List<string> rotated = new(localToUseStackMemory.Count());
     for (int i = 0; i < localToUseStackMemory.Count(); i++)
     {
       StringBuilder vertical = new();
-      vertical.Append(localToUseStackMemory.ElementAt(0)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(1)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(2)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(3)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(4)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(5)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(6)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(7)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(8)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(9)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(10)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(11)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(12)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(13)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(14)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(15)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(16)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(17)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(18)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(19)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(20)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(21)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(22)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(23)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(24)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(25)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(26)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(27)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(28)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(29)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(30)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(31)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(32)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(33)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(34)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(35)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(36)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(37)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(38)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(39)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(40)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(41)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(42)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(43)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(44)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(45)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(46)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(47)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(48)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(49)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(50)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(51)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(52)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(53)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(54)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(55)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(56)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(57)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(58)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(59)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(60)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(61)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(62)[i]);
-      vertical.Append(localToUseStackMemory.ElementAt(63)[i]);
+      for (int j = 0; j < localToUseStackMemory.Count(); j++)
+      {
+        vertical.Append(localToUseStackMemory.ElementAt(j)[i]);
+      }
 
       rotated.Add(vertical.ToString());
     }
