@@ -60,19 +60,6 @@ public class WordFinder(IEnumerable<string> matrix) : IWordFinder
     }
   }
 
-  private int CountWord(string word, IEnumerable<string> database)
-  {
-    this._trie.Add(word);
-
-    int counter = 0;
-    foreach (var row in database)
-    {
-
-    }
-
-    return counter;
-  }
-
   /// <summary>
   /// Rotate the matrix database -90 degrees. This is a O(N^2) and could be highly improved if I process the data as it comes
   /// </summary>
