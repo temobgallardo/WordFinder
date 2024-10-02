@@ -16,7 +16,7 @@ public class Trie_Tests
             sut.Add(w);
         }
 
-        var wordsCounter = sut.CountOccurrences(input);
+        var wordsCounter = sut.DeepSearch(input);
 
         Assert.Equal(wordsCounter["go"], actualCountGo);
         Assert.Equal(wordsCounter["good"], actualCountGo);
@@ -36,7 +36,7 @@ public class Trie_Tests
             sut.Add(w);
         }
 
-        var expected = sut.CountOccurrences(input);
+        var expected = sut.DeepSearch(input);
 
         foreach (var w in words)
         {
