@@ -55,7 +55,7 @@ public class Trie : ITrie<string>
   {
     if (string.IsNullOrEmpty(toSearchIn))
     {
-      return _wordsCount;
+      return [];
     }
 
     return CountOcurrencesInInternal(toSearchIn);
@@ -82,7 +82,7 @@ public class Trie : ITrie<string>
       }
     }
 
-    return _wordsCount.OrderByDescending(item => item.Value).ToDictionary();
+    return _wordsCount.Where(item => item.Value > 0).OrderByDescending(item => item.Value).ToDictionary();
   }
 
   private int CountOnStream(string stream)
