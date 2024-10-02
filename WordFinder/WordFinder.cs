@@ -5,19 +5,21 @@ using WordFinder.Interfaces;
 
 namespace WordFinder;
 
-public class WordFinder(IEnumerable<string> matrix) : IWordFinder
+public class WordFinder(IRequestMatrixService requestMatrixService, ITrie<string> trie) : IWordFinder
 {
-  // TODO: Inject this as service
-  private readonly IEnumerable<string> _matrix = matrix;
+  private IEnumerable<string> _matrix = [];
+  private readonly ITrie<string> _trie = trie;
 
-  // TODO: Inject this service
-  private readonly Trie _trie = new();
-
-  public IEnumerable<string> Find(IEnumerable<string> wordStream)
+  public async Task<IEnumerable<string>> Find(IEnumerable<string> wordStream)
   {
     if (!wordStream.Any())
     {
       return [];
+    }
+
+    if (!_matrix.Any())
+    {
+      _matrix = await requestMatrixService.GetMatrix();
     }
 
     // If users send repeated words, distinct them
@@ -33,7 +35,6 @@ public class WordFinder(IEnumerable<string> matrix) : IWordFinder
     return wordCount.Keys.Take(10);
   }
 
-  // Making this static to avoid null checks due to virtual call sites
   private Dictionary<string, int> FindInternal(IEnumerable<string> wordStream, IEnumerable<string> database)
   {
     var wordCount = new Dictionary<string, int>(wordStream.Count());
@@ -44,7 +45,7 @@ public class WordFinder(IEnumerable<string> matrix) : IWordFinder
 
     CountOccurrences(database, wordCount);
 
-    // Hard part need to build the vertical version of the database streams
+    // building the vertical version of the database streams
     var rotatedDb = RotateDatabaseMatrix90Degrees(database);
 
     CountOccurrences(rotatedDb, wordCount);
@@ -56,7 +57,7 @@ public class WordFinder(IEnumerable<string> matrix) : IWordFinder
   {
     foreach (var dbWord in database)
     {
-      wordCount.Append(_trie.CountOccurrences(dbWord));
+      wordCount.Append(_trie.DeepSearch(dbWord));
     }
   }
 
