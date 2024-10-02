@@ -1,11 +1,14 @@
 using System.Text;
+using WordFinder.Interfaces;
 
 namespace WordFinder;
 
-public class Trie //: ITrie
+public class Trie : ITrie<string>
 {
   private readonly TrieNode _rootNode = new();
   private readonly Dictionary<string, int> _wordsCount = [];
+
+  public Dictionary<string, int> WordCount { get => _wordsCount; }
 
   public void Add(string word)
   {
@@ -43,41 +46,36 @@ public class Trie //: ITrie
     return node.IsWord;
   }
 
-  public int CountOnStream(string stream)
-  {
-    if (string.IsNullOrEmpty(stream))
-    {
-      return 0;
-    }
-
-    return CountOnStreamInternal(stream);
-  }
-
   /// <summary>
-  /// This is O(S) where S is the size of stream. CountOnStream is also O(S) the thing here is that we are moving through the array in both algorithms using the same index and hence don't repeat any work twice.
+  /// Searches the words in the Trie within the stream.
   /// </summary>
-  /// <param name="stream"></param>
+  /// <param name="toSearchIn"></param>
   /// <returns></returns>
-  public Dictionary<string, int> CountOccurrences(string stream)
+  public Dictionary<string, int> DeepSearch(string toSearchIn)
   {
-    if (string.IsNullOrEmpty(stream))
+    if (string.IsNullOrEmpty(toSearchIn))
     {
       return _wordsCount;
     }
 
-    return CountOcurrencesInternal(stream);
+    return CountOcurrencesInInternal(toSearchIn);
   }
 
-  private Dictionary<string, int> CountOcurrencesInternal(string stream)
+  /// <summary>
+  /// This is O(S) where S is the size of <paramref name="stream"/>. This is moving through the array in using a control index. 
+  /// </summary>
+  /// <param name="stream">the string to look for words</param>
+  /// <returns>Words found and number of ocurrences</returns>
+  private Dictionary<string, int> CountOcurrencesInInternal(string stream)
   {
     for (int i = 0; i < stream.Length; i++)
     {
-      // todo: this could be avoided if passed stream to CountOnStream with indexes
+      // TODO: can be avoided if passed stream and i index
       var current = stream[i..];
 
       var position = CountOnStream(current);
 
-      // avoid processing position already done
+      // Any movement in the Counting? Check following chars in the stream
       if (position > 0)
       {
         i += position;
@@ -85,6 +83,16 @@ public class Trie //: ITrie
     }
 
     return _wordsCount.OrderByDescending(item => item.Value).ToDictionary();
+  }
+
+  private int CountOnStream(string stream)
+  {
+    if (string.IsNullOrEmpty(stream))
+    {
+      return 0;
+    }
+
+    return CountOnStreamInternal(stream);
   }
 
   private int CountOnStreamInternal(string stream)
