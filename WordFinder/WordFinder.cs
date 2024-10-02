@@ -12,7 +12,7 @@ public class WordFinder(IRequestMatrixService requestMatrixService, ITrie<string
 
   public async Task<IEnumerable<string>> Find(IEnumerable<string> wordStream)
   {
-    if (!wordStream.Any())
+    if (wordStream is null || !wordStream.Any())
     {
       return [];
     }
@@ -26,7 +26,7 @@ public class WordFinder(IRequestMatrixService requestMatrixService, ITrie<string
     // var distinctWords = wordStream.Distinct();
     var distinctWords = new HashSet<string>(wordStream);
 
-    // Don't mind the case
+    // lower case
     var lowerAdnDistinctWords = distinctWords.Select(w => w.ToLower());
 
     // TODO: Paralelize
