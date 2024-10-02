@@ -18,18 +18,21 @@ public class RequestMatrixService : IRequestMatrixService
   {
     for (int i = 0; i < count; i++)
     {
-      yield return GenerateString(count);
+      yield return GenerateString();
     }
   }
 
-  private string GenerateString(int count)
+  private string GenerateString()
   {
     var result = new StringBuilder(new string(Enumerable.Repeat(chars, _rowLenght).Select(s => s[random.Next(s.Length)]).ToArray()));
 
-    foreach (var word in _specialWords)
+    foreach (var _ in _specialWords)
     {
+      var indForWord = random.Next(_specialWords.Length);
+      var word = _specialWords[indForWord];
       int position = 0;
-      for (int i = 0; i < _ocurrences; i++)
+      var ocurrences = random.Next(_ocurrences);
+      for (int i = 0; i < ocurrences; i++)
       {
         position += word.Length + random.Next(word.Length);
 
