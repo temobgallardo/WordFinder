@@ -1,8 +1,8 @@
 using System.Text;
 
-namespace WordFinder.Tests;
+namespace WordFinder.Tests.Generators;
 
-public class DatabaseMatrixStringGenerator(string[] _specialWords, int ocurrences, char[] _alphabet, int _rowLenght)
+public class DatabaseMatrixStringGenerator(string[] _specialWords, int _ocurrences, char[] _alphabet, int _rowLenght)
 {
   private static readonly Random random = new();
   private readonly char[] chars = _alphabet ?? "abcdefghijklmnopqrstuvwxyz".ToCharArray();
@@ -22,13 +22,13 @@ public class DatabaseMatrixStringGenerator(string[] _specialWords, int ocurrence
     foreach (var word in _specialWords)
     {
       int position = 0;
-      for (int i = 0; i < ocurrences; i++)
+      for (int i = 0; i < _ocurrences; i++)
       {
         position += word.Length + random.Next(word.Length);
 
-        if (position > count)
+        if (position > _rowLenght - word.Length)
         {
-          continue;
+          break;
         }
 
         result.Remove(position, word.Length);
