@@ -61,9 +61,13 @@ public class WordFinder(IRequestMatrixService requestMatrixService, ITrie<string
       wordCount.Append(_trie.DeepSearch(dbWord));
     }
   }
+  /// <summary>
+  /// Search the words into the database parellaly. THis is possible due because each row of the database is independent of each other
+  /// </summary>
+  /// <param name="database">Array of strings to search in</param>
+  /// <param name="wordCount">Result of the number of words found in <paramref name="database"/></param>
   private void CountOccurrencesParallel(IEnumerable<string> database, Dictionary<string, int> wordCount)
     => Parallel.ForEach(database, row => wordCount.Append(_trie.DeepSearch(row)));
-
 
   /// <summary>
   /// Rotate the matrix database -90 degrees. This is a O(N^2) and could be highly improved if I process the data as it comes
