@@ -29,7 +29,6 @@ public class WordFinder(IRequestMatrixService requestMatrixService, ITrie<string
     // lower case
     var lowerAdnDistinctWords = distinctWords.Select(w => w.ToLower());
 
-    // TODO: Paralelize
     var wordCount = FindInternal(lowerAdnDistinctWords, _matrix);
 
     return wordCount.Keys.Take(10);
@@ -43,12 +42,14 @@ public class WordFinder(IRequestMatrixService requestMatrixService, ITrie<string
       _trie.Add(w);
     }
 
-    CountOccurrences(database, wordCount);
+    // CountOccurrences(database, wordCount);
+    CountOccurrencesParallel(database, wordCount);
 
     // building the vertical version of the database streams
     var rotatedDb = RotateDatabaseMatrix90Degrees(database);
 
-    CountOccurrences(rotatedDb, wordCount);
+    // CountOccurrences(rotatedDb, wordCount);
+    CountOccurrencesParallel(rotatedDb, wordCount);
 
     return wordCount.OrderByDescending(item => item.Value).ToDictionary();
   }
@@ -60,6 +61,9 @@ public class WordFinder(IRequestMatrixService requestMatrixService, ITrie<string
       wordCount.Append(_trie.DeepSearch(dbWord));
     }
   }
+  private void CountOccurrencesParallel(IEnumerable<string> database, Dictionary<string, int> wordCount)
+    => Parallel.ForEach(database, row => wordCount.Append(_trie.DeepSearch(row)));
+
 
   /// <summary>
   /// Rotate the matrix database -90 degrees. This is a O(N^2) and could be highly improved if I process the data as it comes
