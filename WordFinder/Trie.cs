@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Text;
 using WordFinder.Interfaces;
 
@@ -5,10 +6,16 @@ namespace WordFinder;
 
 public class Trie : ITrie<string>
 {
+  private readonly int _concurrencyLevel;
   private readonly TrieNode _rootNode = new();
-  private readonly Dictionary<string, int> _wordsCount = [];
+  private readonly ConcurrentDictionary<string, int> _wordsCount;
 
-  public Dictionary<string, int> WordCount { get => _wordsCount; }
+  public Trie()
+  {
+    _concurrencyLevel = Environment.ProcessorCount * 2;
+    _wordsCount = new ConcurrentDictionary<string, int>(_concurrencyLevel, 64);
+  }
+  public Dictionary<string, int> WordCount { get => _wordsCount.ToDictionary(); }
 
   public void Add(string word)
   {
@@ -25,7 +32,7 @@ public class Trie : ITrie<string>
       node = value;
     }
 
-    _wordsCount.Add(word, 0);
+    _wordsCount[word] = 0;
     node.IsWord = true;
   }
 
