@@ -16,11 +16,9 @@ public class TrieTestData : IEnumerable<object[]>
         StreamInput = "jijcallcallgiuhqriareturnjijjreriaari",
         StringCounterResult = new Dictionary<string, int> {
           {"call", 2 },
-          { "cause", 0 },
           { "ria", 2 },
           { "re", 2 },
           { "return", 1 },
-          { "bought", 0 }
         }
       } };
     yield return new TrieTestData[] {new()
@@ -29,28 +27,10 @@ public class TrieTestData : IEnumerable<object[]>
         StreamInput = "jiboughtjcallc1allgiuhqriareturnjijjreriaari",
         StringCounterResult = new Dictionary<string, int> {
           {"call", 1 },
-          { "cause", 0 },
           { "ria", 2 },
           { "re", 2 },
           { "return", 1 },
           { "bought", 1 },
-          { "house", 0 }
-        }
-      } };
-    yield return new TrieTestData[]{
-      new (){
-        InputData = [""],
-        StreamInput = "jiboughtjcallc1allgiuhqriareturnjijjreriaari",
-        StringCounterResult = new Dictionary<string, int> {
-          {"", 0 }
-        }
-      } };
-    yield return new TrieTestData[]{
-      new(){
-        InputData = ["a"],
-        StreamInput = "",
-        StringCounterResult = new Dictionary<string, int> {
-          {"a", 0 }
         }
       } };
     yield return new TrieTestData[]{
@@ -68,7 +48,6 @@ public class TrieTestData : IEnumerable<object[]>
         StringCounterResult = new Dictionary<string, int> {
           {"a", 21 },
           {"b", 1 },
-          {"c", 0 },
         }
       } };
     yield return new TrieTestData[]{

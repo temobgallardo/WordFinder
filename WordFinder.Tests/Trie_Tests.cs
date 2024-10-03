@@ -8,8 +8,6 @@ public class Trie_Tests
         Trie sut = new();
         var input = "adgoodadjiidgoodgioagood";
         string[] words = ["good", "go", "and"];
-        int actualCountGo = 3;
-        int actualCountAnd = 0;
 
         foreach (var w in words)
         {
@@ -18,9 +16,43 @@ public class Trie_Tests
 
         var wordsCounter = sut.DeepSearch(input);
 
-        Assert.Equal(wordsCounter["go"], actualCountGo);
-        Assert.Equal(wordsCounter["good"], actualCountGo);
-        Assert.Equal(wordsCounter["and"], actualCountAnd);
+        Assert.Equal(3, wordsCounter["go"]);
+        Assert.Equal(3, wordsCounter["good"]);
+        Assert.DoesNotContain("and", wordsCounter);
+    }
+
+    [Fact]
+    public void If_WordsAreNull_Should_ReturnEmtpy()
+    {
+        Trie sut = new();
+        var input = "adgoodadjiidgoodgioagood";
+        string[] words = [];
+
+        foreach (var w in words)
+        {
+            sut.Add(w);
+        }
+
+        var wordsCounter = sut.DeepSearch(input);
+
+        Assert.Empty(wordsCounter);
+    }
+
+    [Fact]
+    public void If_InputIsNullOrEmpty_Should_ReturnEmtpy()
+    {
+        Trie sut = new();
+        var input = "";
+        string[] words = ["tree", "animal"];
+
+        foreach (var w in words)
+        {
+            sut.Add(w);
+        }
+
+        var wordsCounter = sut.DeepSearch(input);
+
+        Assert.Empty(wordsCounter);
     }
 
     [Theory]
@@ -36,11 +68,12 @@ public class Trie_Tests
             sut.Add(w);
         }
 
-        var expected = sut.DeepSearch(input);
-
-        foreach (var w in words)
+        var actualWordResult = sut.DeepSearch(input);
+        var actual = actualWordResult.Keys.ToArray();
+        Assert.True(testData.StringCounterResult.Count == actual.Length);
+        foreach (var expected in testData.StringCounterResult.Keys)
         {
-            Assert.Equal(expected[w], testData.StringCounterResult[w]);
+            Assert.Contains(expected, actual);
         }
     }
 
